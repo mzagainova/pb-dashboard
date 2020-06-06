@@ -5,5 +5,5 @@ The dashboard provides a real-time view into police brutality across the United 
 
 Our first iteration of the dashboard was scrappy. We used a mix of Google Forms, Google Sheets, and Tableau Public, to ship this first prototype here-> https://public.tableau.com/profile/kamran2555#!/vizhome/shared/937995TNC
 
-This repo is a living version olution of the dashboard, as it evolves into an independent application of its own. 
+This repo is a living version  of the dashboard, as it evolves into an independent application of its own. 
 
