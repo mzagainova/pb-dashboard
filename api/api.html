@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>policetracker.link</title>
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+    <style>
+        body {
+            padding-top: 50px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="jumbotron">
+            <h1>APIs available for pulling police shootings and police brutality</h1>
+
+            <h3>/shootings will return all records in our DB</h3>
+            <h3>/shootings/{id} will return just record number id</h3>
+
+            <h2>Future functionality</h2>
+            <h3>/shootings?startIndex=0&size=20 will return the first 20 records</h3>
+            <h3>/shootings?startIndex=-1&size=20 will return the last (most recent) 20 records</h3>
+            <h3>/brutality will return all records in our DB</h3>
+            <h3>/brutality/{id} will return just record id</h3>
+            <h3>/brutality?startIndex=0&size=20 will return 20 records starting from the beginning</h3>
+            <h3>/brutality?startIndex=-1&size=20 will return the last (most recent) 20 records</h3>
+
+        </div>
+    </div>
+
+</body>
+
+</html>
