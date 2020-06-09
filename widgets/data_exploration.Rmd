@@ -1,0 +1,482 @@
+---
+output:
+  html_notebook:
+    code_folding: hide
+    toc: false
+    toc_float: true
+    toc_depth: 5
+    number_sections: false
+    
+---
+
+<!-- CSS -->
+
+<style type="text/css">
+th {
+    background-color: #44494D;
+    color: white;
+    font-size: 10pt;
+    font-family: "Arial", sans-serif;
+    text-align: left;
+    <!-- margin-left: auto; -->
+    <!-- margin-right: auto; -->
+    <!-- padding-top: 25px; -->
+  }
+
+td {  /* Table  */
+  font-size: 10pt;
+  <!-- text-align: center; -->
+  font-family: "Arial", sans-serif;
+  <!-- padding-top: 25px; -->
+}
+a {
+  color: #1f78b4;
+  font-size: 12pt;
+  font-family: "Arial;
+}
+body {
+  font-size: 12pt;
+  font-family: "Arial", sans-serif;
+}
+
+h1 {
+  font-size: 14pt;
+  sfont-style: italic;
+  font-weight: bolder;
+  color: #44494D;
+  color: #44494D;
+  <!-- font-weight: bolder; -->
+  
+}
+h2 {
+  font-size: 12pt;
+  <!-- font-style: italic; -->
+  font-weight: bolder;
+  color: #44494D;
+  }
+  
+h3 {
+  font-size: 12pt;
+  <!-- font-weight: bolder; -->
+  color: #5EBACE;
+}
+
+h4 {
+  font-size: 12pt;
+  font-weight: bolder;
+  color: =#44494D;
+}
+
+.sidenav {
+  height: 100%;
+  width: 200px;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: #a6cee3;
+  overflow-x: hidden;
+  padding-top: 20px;
+}
+
+.sidenav a {
+  padding: 6px 8px 6px 16px;
+  text-decoration: none;
+  font-size: 12pt;
+  <!-- font-weight: bolder; -->
+  font-family: "Arial", sans-serif;
+  color: #FFFFFF;
+  display: block;
+  text-align: center;
+}
+
+.center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+}
+
+.sidenav a:hover {
+  color: #f1f1f1;
+}
+
+.main {
+  margin-left: 200px; /* Same as the width of the sidenav */
+
+}
+.main-container {
+  max-width: 1400px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 25px
+}
+  /*padding: 0px 5px; */
+}
+
+@media screen and (max-height: 450px) {
+  .sidenav {padding-top: 15px;}
+  .sidenav a {font-size: 18px;}
+}
+</style>
+
+<!-- TITLE INFO  -->
+
+# Police Brutatlity - Data Exploration
+## Contributor(s): Jessica Marx
+## Date: `r format(Sys.time(), "%d %B %Y")`
+## Code: <a href="https://github.com/mzagainova/pb-dashboard" target="_blank">GitHub</a>
+## Data: Sourced from this <a href="https://docs.google.com/spreadsheets/d/11wLWM957wkxRIyK7EFW-So9jqGhvQxcZ83ipm1kVEnQ/edit#gid=916411806" target="_blank">Google Sheet</a> and this census data from <a href="https://www.kaggle.com/headsortails/covid19-us-county-jhu-data-demographics?select=us_county.csv" target="_blank">Kaggle</a>
+
+The following is not meant to be a source of truth in terms of data integrity, but rather to illustrate different ways of displaying, engineering, and/or presenting the data. 
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+
+```
+
+
+```{r package, message = FALSE, warning = FALSE}
+# load packages, install if needed
+packages = c(
+      "dplyr"
+    , "ggplot2"
+    , "formattable"
+    , "plotly"
+    , "RColorBrewer"
+    , "scales"
+    , "stringr"
+    , "tidyr"
+    , "ElmeR"
+    , "RJDBC"
+    , "kableExtra"
+    , "wesanderson"
+    , "reshape2"
+    , "rtweet"
+    , "tidytext"
+    , "lubridate"
+    , "wordcloud"
+    , "ggpubr"
+    , "ggthemes"
+    , "knitrBootstrap"
+    , "DT"
+    , "MatchIt"
+    , "beyonce"
+    , "UpSetR"
+    , "gganimate"
+    , "wordcloud2"
+    , "widyr"
+    , "ggraph"
+    , "igraph"
+    , "aod"
+    , "corrplot"
+    , "ROCR"
+    , "InformationValue"
+    , "car"
+    , "glmnet"
+    , "caret"
+    , "kernlab"
+    , "pdp"
+    , "rpart.plot"
+    , "rpart"
+    , "e1071"
+    )
+
+package.check <- lapply(packages, FUN = function(x) {
+  if (!require(x, character.only = TRUE)) {
+    install.packages(x, dependencies = TRUE)
+    library(x, character.only = TRUE)
+  }
+})
+```
+
+
+```{r functions, echo=FALSE}
+
+#functions!
+
+#round 
+round.to <- function(x, b) {
+  round(x/b)*b
+}
+
+#odds to probability
+odds.to.prob <- function(odds) {
+  odds/(1 + odds) 
+}
+
+#log odds to probability 
+logit2prob <- function(logit){
+  odds <- exp(logit)
+  prob <- odds / (1 + odds)
+  return(prob)
+}
+
+#convert to a range
+range01 <- function(x){
+  (x-min(x))/(max(x)-min(x))
+}
+
+#function to get vector of color values from RColorBrewer
+get_hex_values <- function(pal) {
+  brewer.pal(brewer.pal.info[pal, "maxcolors"], pal)
+}
+paired_cols <- get_hex_values(pal = "Paired")
+
+#paired palette with brighter yellow (use this for divisional color mapping)
+paired_better <- replace(paired_cols, paired_cols == "#FFFF99", "#fed976")
+
+#round to nearest 5, 10, etc 
+round_nearest = function(x, base) {
+  base*round(x/base)
+}
+
+left = function(text, num_char) {
+  substr(text, 1, num_char)
+}
+
+mid = function(text, start_num, num_char) {
+  substr(text, start_num, start_num + num_char - 1)
+}
+
+right = function(text, num_char) {
+  substr(text, nchar(text) - (num_char-1), nchar(text))
+}
+
+#turn values outside of IQR to NA
+outlierreplacement <- function(dataframe){
+  dataframe %>%          
+           map_if(is.numeric, ~ replace(.x, .x %in% boxplot.stats(.x)$out, NA)) %>%
+           dplyr::bind_cols() 
+}
+
+#evaluate model
+eval_metrics = function(model, df, predictions, target){
+  resids = df[,target] - predictions
+  resids2 = resids**2
+  N = length(predictions)
+  r2 = as.character(round(summary(model)$r.squared, 2))
+  adj_r2 = as.character(round(summary(model)$adj.r.squared, 2))
+  print(adj_r2) #Adjusted R-squared
+  print(as.character(round(sqrt(sum(resids2)/N), 2))) #RMSE
+}
+
+```
+
+```{r}
+
+#import the data
+library(readr)
+us_county_stats <- read_csv("datasets_579969_1220276_us_county.csv")
+brutality_cases <- read_csv("police_brutality.csv")
+
+```
+
+
+```{r}
+
+# glimpse the data
+# us_county_stats %>% 
+#   head() 
+# 
+# brutality_cases %>% 
+#   head()
+
+```
+
+## Columns and percent of rows with missing fields from Brutality dataset. 
+```{r}
+
+#missing values
+colMeans(is.na(brutality_cases))
+
+```
+
+## Summary of US census dataset. 
+
+```{r}
+
+summary(us_county_stats)
+
+```
+
+```{r}
+
+# Clean dataset (drop nulls)
+brutality_clean = brutality_cases
+
+# Remove columns with more than 50% NA
+brutality_clean = brutality_clean[, which(colMeans(!is.na(brutality_clean)) > 0.5)]
+
+# Change columns to snake case
+
+snake_case <- function(x) {
+  colnames(x) <- gsub(" ", "_", colnames(x));x
+  colnames(x) <-tolower(colnames(x))
+}
+
+colnames(brutality_clean) = snake_case(brutality_clean)
+
+brutality_clean = brutality_clean %>% 
+  rename(
+   "state" = state_where_the_police_brutality_occurred
+   , "city" = city_where_the_police_brutality_occurred
+   , "date" = date_of_the_police_brutality
+  ) %>% 
+  mutate(
+    state_county = paste0(state, "-", county)
+  )
+
+brutality_clean$date = as.Date(brutality_clean$date, "%m/%d/%Y")
+
+```
+
+```{r}
+
+us_stats_clean = us_county_stats
+
+us_stats_clean$county = str_replace(us_stats_clean$county, " County", "")
+
+us_stats_clean = us_stats_clean %>% 
+  group_by(state) %>% 
+  mutate(state_pop = sum(population)) %>% 
+  rename(
+    "state_full" = state
+    , "state" = state_code
+    ) %>% 
+  ungroup() 
+
+# us_stats_clean = 
+  
+us_stats_state = us_stats_clean %>% 
+  mutate(state_county = paste0(state, "-", county)) %>% 
+  select(state_pop, state, state_full) %>% 
+  unique()
+
+```
+
+
+```{r, message=FALSE}
+
+df_merged = brutality_clean %>% 
+  left_join(us_stats_state) %>% 
+  mutate(state_pop = ifelse(state == "DC", 705749, state_pop)
+  ) %>% 
+  unique()
+
+df_merged = df_merged %>% 
+  group_by(
+    state
+  ) %>% 
+  add_tally() %>% 
+  ungroup() %>% 
+  rename(
+    "state_totals" = n
+  ) %>% 
+  mutate(
+    state_pop_millions = state_pop/1000000
+    , totals_per_million = state_totals/state_pop_millions
+  ) 
+
+```
+
+# Incidents by State
+
+```{r}
+
+df_plot = df_merged %>% 
+  select(
+    state, state_pop, state_full, state_pop_millions, state_totals, totals_per_million
+  ) %>% 
+  unique() %>% 
+  arrange(desc(totals_per_million)) %>% 
+  mutate(
+    state = reorder(as.factor(state), totals_per_million)
+  ) 
+
+a = df_plot %>% 
+  plot_ly(
+    y = ~state
+    , x = ~totals_per_million
+    , type = "bar"
+    , color = paired_better[1]
+    , orientation = "h"
+    , width = 900
+    , height = 1000
+    , hoverinfo = "text"
+    , text = ~paste(
+      "State: ", state_full
+      , "<br>State Population: ", comma(state_pop)
+      , "<br>Reported Incidents: ", state_totals
+      , "<br>Incidents per Million Residents: ", comma(totals_per_million)
+    )
+  ) %>% 
+  layout(
+    xaxis = list(title = "Reported Incidents per Million State Residents")
+    , yaxis = list(title = "")
+  )
+
+b = df_plot %>% 
+  plot_ly(
+    y = ~state
+    , x = ~state_totals
+    , type = "bar"
+    , color = paired_better[10]
+    , orientation = "h"
+    , width = 900
+    , height = 1000
+    , hoverinfo = "text"
+    , showlegend = FALSE
+    , text = ~paste(
+      "State: ", state_full
+      , "<br>State Population: ", comma(state_pop)
+      , "<br>Reported Incidents: ", state_totals
+      , "<br>Incidents per Million Residents: ", comma(totals_per_million)
+    )
+  ) %>% 
+  layout(
+    xaxis = list(title = "Total Reported Incidents")
+    , yaxis = list(title = "")
+  )
+
+subplot(a, b, titleX = TRUE)
+
+```
+
+### _Excluding counties with null populations_
+There are some counties with null values when it comes to population. We can obviously find these via a better dataset, but for now I'm going to exclude them in order to provide examples with the data that we have. _Obviously, this is not accurate reporting._
+
+# County Incidents per Capita 
+
+```{r}
+
+df_filtered = df_merged
+
+df_filtered = df_filtered %>% 
+  left_join(us_stats_clean) %>% 
+  filter(!is.na(population)) 
+
+df_filtered = df_filtered %>% 
+  group_by(state, county) %>% 
+  add_tally() %>% 
+  rename("county_totals" = n) %>% 
+  arrange(desc(county_totals)) %>% 
+  mutate("incidents_per_capita" = county_totals/(population)) %>% 
+  ungroup() 
+
+df_county = df_filtered %>% 
+  select(state, state_county, county, state_full, state_totals, median_age, population, county_totals, incidents_per_capita) %>% 
+  unique() %>% 
+  arrange(desc(incidents_per_capita))
+
+df_county %>% 
+  mutate(
+    incidents_per_capita = comma(incidents_per_capita, .000001)
+    , population = comma(population)
+    ) %>% 
+  datatable()
+
+
+```
+
