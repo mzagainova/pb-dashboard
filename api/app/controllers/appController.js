@@ -3,13 +3,38 @@
 var Shooting = require('../model/appModel.js');
 
 exports.list_all_shootings = function(req, res) {
-  Shooting.getAllShooting(function(err, shooting) {
-
+  Shooting.getAllShootings(function(err, shooting) {
     console.log('controller')
     if (err)
       res.send(err);
       console.log('res', shooting);
     res.send(shooting);
+  });
+};
+
+exports.list_last_shootings = function(req, res) {
+  Shooting.getLast20Shootings(function(err, shooting) {
+    console.log('controller')
+    if (err)
+      res.send(err);
+      console.log('res', shooting);
+    res.send(shooting);
+  });
+};
+
+exports.read_a_shooting = function(req, res) {
+  Shooting.getShootingById(req.params.shootingId, function(err, shooting) {
+    if (err)
+      res.send(err);
+    res.json(shooting);
+  });
+};
+
+exports.read_span_shootings = function(req, res) {
+  Shooting.getShootingByIds(req.params.shootingId1, req.params.shootingId2, function(err, shooting) {
+    if (err)
+      res.send(err);
+    res.json(shooting);
   });
 };
 
@@ -29,16 +54,6 @@ exports.create_a_shooting = function(req, res) {
     }
 };
 
-
-exports.read_a_shooting = function(req, res) {
-  Shooting.getShootingById(req.params.shootingId, function(err, shooting) {
-    if (err)
-      res.send(err);
-    res.json(shooting);
-  });
-};
-
-
 exports.update_a_shooting = function(req, res) {
   Shooting.updateById(req.params.shootingId, new Shooting(req.body), function(err, shooting) {
     if (err)
@@ -46,7 +61,6 @@ exports.update_a_shooting = function(req, res) {
     res.json(shooting);
   });
 };
-
 
 exports.delete_a_shooting = function(req, res) {
   Shooting.remove( req.params.shootingId, function(err, shooting) {

@@ -21,18 +21,30 @@ var Shooting = function(shooting){
 //             });           
 // };
 Shooting.getShootingById = function (shootingId, result) {
-        sql.query("Select * from shootings where shootingsID = ? ", shootingId, function (err, res) {             
-                if(err) {
-                    console.log("error: ", err);
-                    result(err, null);
-                }
-                else{
-                    result(null, res);
-              
-                }
-            });   
+    sql.query("Select * from shootings where shootingsID = ? ", shootingId, function (err, res) {             
+            if(err) {
+                console.log("error: ", err);
+                result(err, null);
+            }
+            else{
+                result(null, res);
+          
+            }
+        });   
 };
-Shooting.getAllShooting = function (result) {
+Shooting.getShootingByIds = function (shootingId1, shootingId2, result) {
+    sql.query("Select * from shootings where shootingsID between ? and ?", [ shootingId1, shootingId2 ], function (err, res) {             
+            if(err) {
+                console.log("error: ", err);
+                result(err, null);
+            }
+            else{
+                result(null, res);
+          
+            }
+        });   
+};
+Shooting.getAllShootings = function (result) {
         sql.query("Select * from shootings", function (err, res) {
 
                 if(err) {
@@ -44,6 +56,19 @@ Shooting.getAllShooting = function (result) {
                   result(null, res);
                 }
             });   
+};
+Shooting.getLast20Shootings = function (result) {
+    sql.query("Select * from shootings order by date desc limit 20", function (err, res) {
+
+            if(err) {
+                console.log("error: ", err);
+                result(null, err);
+            }
+            else{
+              console.log('shootings : ', res);  
+              result(null, res);
+            }
+        });   
 };
 // Shooting.updateById = function(id, shooting, result){
 //   sql.query("UPDATE shootings SET shooting = ? WHERE shootingsID = ?", [shooting.shooting, id], function (err, res) {
