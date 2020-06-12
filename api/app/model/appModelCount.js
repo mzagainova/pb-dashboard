@@ -9,7 +9,7 @@ var Count = function(count){
 };
 
 Count.countAllRecords = function (result) {
-        sql.query("select (Select count(*) as total from shootings) + (Select count(*) as total from brutality)", function (err, res) {
+        sql.query("select (Select count(*) as total from shootings) + (Select count(*) as total from brutality) as total", function (err, res) {
 
                 if(err) {
                     console.log("error: ", err);
