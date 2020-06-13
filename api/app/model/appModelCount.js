@@ -133,4 +133,47 @@ sql.query("Select state_code, count(*) as total from brutality group by state_co
     }
 });   
 };
+
+
+Count.countAllRecordsByStateCounty = function (result) {
+    sql.query("(Select state, county, count(*) as total from milehigh_grassroots_law.shootings group by state, county order by state, county) UNION (Select state, county, count(*) as total from milehigh_grassroots_law.brutality group by state, county order by state, county) ", function (err, res) {
+    
+            if(err) {
+                console.log("error: ", err);
+                result(null, err);
+            }
+            else{
+              console.log('counts : ', res);  
+              result(null, res);
+            }
+        });   
+    };
+    
+    Count.countAllShootingsByStateCounty = function (result) {
+    sql.query("Select state, county, count(*) as total from shootings group by state, county order by state, county", function (err, res) {
+    
+        if(err) {
+            console.log("error: ", err);
+            result(null, err);
+        }
+        else{
+          console.log('counts : ', res);  
+          result(null, res);
+        }
+    });   
+    };
+    
+    Count.countAllBrutalityByStateCounty = function (result) {
+    sql.query("Select state, county, count(*) as total from brutality group by state, county order by state, county", function (err, res) {
+    
+        if(err) {
+            console.log("error: ", err);
+            result(null, err);
+        }
+        else{
+          console.log('counts : ', res);  
+          result(null, res);
+        }
+    });   
+    };
 module.exports= Count;

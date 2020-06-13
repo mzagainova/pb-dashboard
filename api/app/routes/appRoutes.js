@@ -23,6 +23,12 @@ module.exports = function(app) {
     .get(count.count_all_shootings_by_stateabbv);
   app.route('/count/brutality/state/abbv')
     .get(count.count_all_brutality_by_stateabbv);
+  app.route('/count/statecounty')
+    .get(count.count_all_records_by_state_county);
+  app.route('/count/shootings/statecounty')
+    .get(count.count_all_shootings_by_state_county);
+  app.route('/count/brutality/statecounty')
+    .get(count.count_all_brutality_by_state_county);
 
   app.route('/shootings')
     .get(shootings.list_all_shootings);
