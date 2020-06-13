@@ -65,6 +65,35 @@ exports.count_all_brutality_by_state = function(req, res) {
     res.send(count);
   });
 };
+exports.count_all_records_by_stateabbv = function(req, res) {
+  Count.countAllRecordsByStateAbbv(function(err, count) {
+    console.log('controller')
+    if (err)
+      res.send(err);
+      console.log('res', count);
+    res.send(count);
+  });
+};
+
+exports.count_all_shootings_by_stateabbv = function(req, res) {
+  Count.countAllShootingsByStateAbbv(function(err, count) {
+    console.log('controller')
+    if (err)
+      res.send(err);
+      console.log('res', count);
+    res.send(count);
+  });
+};
+
+exports.count_all_brutality_by_stateabbv = function(req, res) {
+  Count.countAllBrutalityByStateAbbv(function(err, count) {
+    console.log('controller')
+    if (err)
+      res.send(err);
+      console.log('res', count);
+    res.send(count);
+  });
+};
 
 // SHOOTINGS API
 exports.list_all_shootings = function(req, res) {

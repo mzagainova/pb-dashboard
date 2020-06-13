@@ -11,13 +11,19 @@ module.exports = function(app) {
     .get(count.count_all_shootings);
   app.route('/count/brutality')
     .get(count.count_all_brutality);
-  app.route('/count/state')
+  app.route('/count/state/name')
     .get(count.count_all_records_by_state);
-  app.route('/count/shootings/state')
+  app.route('/count/shootings/state/name')
     .get(count.count_all_shootings_by_state);
-  app.route('/count/brutality/state')
+  app.route('/count/brutality/state/name')
     .get(count.count_all_brutality_by_state);
-   
+  app.route('/count/state/abbv')
+    .get(count.count_all_records_by_stateabbv);
+  app.route('/count/shootings/state/abbv')
+    .get(count.count_all_shootings_by_stateabbv);
+  app.route('/count/brutality/state/abbv')
+    .get(count.count_all_brutality_by_stateabbv);
+
   app.route('/shootings')
     .get(shootings.list_all_shootings);
     // .post(shootings.create_a_shooting);
