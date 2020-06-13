@@ -7,3 +7,27 @@ The dashboard provides a real-time view into police brutality across the United 
 Our first iteration of the dashboard was scrappy. We used a mix of Google Forms, Google Sheets, and Tableau Public, to ship this first prototype here-> https://public.tableau.com/profile/kamran2555#!/vizhome/shared/937995TNC
 
 This repo is a living version of the dashboard, as it evolves into an independent application of its own.
+
+## Developing
+
+This application is built on the React application framework [Next.js](https://nextjs.org/).
+
+### Installation
+
+First install the project dependencies with:
+
+```
+npm i
+```
+
+### Running Locally
+
+To run, start the development server with the following command:
+
+```
+npm run dev
+```
+
+### Deployment
+
+// TODO 
