@@ -65,6 +65,37 @@ exports.count_all_brutality_by_state = function(req, res) {
     res.send(count);
   });
 };
+
+exports.count_all_records_by_state_county = function(req, res) {
+  Count.countAllRecordsByStateCounty(function(err, count) {
+    console.log('controller')
+    if (err)
+      res.send(err);
+      console.log('res', count);
+    res.send(count);
+  });
+};
+
+exports.count_all_shootings_by_state_county = function(req, res) {
+  Count.countAllShootingsByStateCounty(function(err, count) {
+    console.log('controller')
+    if (err)
+      res.send(err);
+      console.log('res', count);
+    res.send(count);
+  });
+};
+
+exports.count_all_brutality_by_state_county = function(req, res) {
+  Count.countAllBrutalityByStateCounty(function(err, count) {
+    console.log('controller')
+    if (err)
+      res.send(err);
+      console.log('res', count);
+    res.send(count);
+  });
+};
+
 exports.count_all_records_by_stateabbv = function(req, res) {
   Count.countAllRecordsByStateAbbv(function(err, count) {
     console.log('controller')
