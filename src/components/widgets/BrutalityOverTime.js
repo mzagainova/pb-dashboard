@@ -101,12 +101,6 @@ function transformData(data) {
   });
 }
 
-function getOneMonthAgo() {
-  const d = new Date();
-  d.setMonth(d.getMonth - 1);
-  return d;
-}
-
 function BrutalityOverTime() {
   const data = transformData(mockData);
   const [zoomDomain, setZoomDomain] = useState({
