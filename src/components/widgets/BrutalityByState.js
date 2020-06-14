@@ -1,5 +1,7 @@
-import React, { useRef, useEffect } from "react";
-import * as d3 from "d3";
+import React from "react";
+import { VictoryChart, VictoryBar, VictoryTheme } from "victory";
+
+import { COLORS } from "../../styles/constants";
 
 const mockData = [
   { name: "CA", value: 1186 },
@@ -55,99 +57,34 @@ const mockData = [
   { name: "RI", value: 6 },
 ];
 
-function BrutalityByState() {
-  const ref = useRef();
-
-  useEffect(() => {
-    const data = mockData.sort(function (a, b) {
-      return d3.ascending(a.value, b.value);
+function transformData(data) {
+  return data
+    .map(function (d) {
+      return { x: d.name, y: d.value };
+    })
+    .sort(function (a, b) {
+      return a.y - b.y;
     });
+}
 
-    //set up svg using margin conventions - we'll need plenty of room on the left for labels
-    const margin = {
-      top: 15,
-      right: 100,
-      bottom: 15,
-      left: 60,
-    };
-    const totalWidth = 495;
-    const totalHeight = 750;
-
-    const width = totalWidth - margin.left - margin.right;
-    const height = totalHeight - margin.top - margin.bottom;
-
-    const svg = d3
-      .select(ref.current)
-      .attr("width", width + margin.left + margin.right)
-      .attr("height", height + margin.top + margin.bottom)
-      .append("g")
-      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-    const x = d3.scale
-      .linear()
-      .range([0, width])
-      .domain([
-        0,
-        d3.max(data, function (d) {
-          return d.value;
-        }),
-      ]);
-
-    const y = d3.scale
-      .ordinal()
-      .rangeRoundBands([height, 0], 0.2)
-      .domain(
-        data.map(function (d) {
-          return d.name;
-        })
-      );
-
-    //make y axis to show bar names
-    const yAxis = d3.svg
-      .axis()
-      .scale(y)
-      //no tick marks
-      .tickSize(0)
-      .orient("left");
-
-    svg.append("g").attr("class", "y axis").call(yAxis);
-
-    const bars = svg.selectAll(".bar").data(data).enter().append("g");
-
-    //append rects
-    bars
-      .append("rect")
-      .attr("class", "bar")
-      .attr("y", function (d) {
-        return y(d.name);
-      })
-      .attr("height", y.rangeBand())
-      .attr("x", 0)
-      .attr("width", function (d) {
-        return x(d.value);
-      });
-
-    //add a value label to the right of each bar
-    bars
-      .append("text")
-      .attr("class", "label")
-      //y position of the label is halfway down the bar
-      .attr("y", function (d) {
-        return y(d.name) + y.rangeBand() / 2 + 4;
-      })
-      //x position is 3 pixels to the right of the bar
-      .attr("x", function (d) {
-        return x(d.value) + 3;
-      })
-      .text(function (d) {
-        return d.value;
-      });
-  }, [ref]);
-
+function BrutalityByState() {
   return (
-    <div>
+    <div style={{ width: 500 }}>
       <h2>Police Brutality By State</h2>
-      <svg ref={ref} />
+      <VictoryChart
+        height={800}
+        theme={VictoryTheme.material}
+        domainPadding={{ x: 10 }}
+      >
+        <VictoryBar
+          barRatio={0.8}
+          style={{
+            data: { fill: COLORS.primary },
+          }}
+          horizontal
+          data={transformData(mockData)}
+        />
+      </VictoryChart>
     </div>
   );
 }
