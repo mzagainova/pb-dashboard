@@ -1,3 +1,9 @@
 .DS_Store
 build
+<<<<<<< .merge_file_a71504
 node_modules
+.next
+.env
+=======
+node_modules
+>>>>>>> .merge_file_a76360
