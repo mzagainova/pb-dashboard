@@ -8,12 +8,12 @@
 		"start": "next start"
 	},
 	"dependencies": {
-		"d3": "^3.5.17",
-		"mysql": "^2.18.1",
 		"next": "^9.4.4",
 		"react": "^16.13.1",
 		"react-dom": "^16.13.1",
-		"topojson": "1"
+		"react-simple-maps": "^2.1.2",
+		"topojson": "1",
+		"victory": "^34.3.11"
 	},
 	"devDependencies": {
 		"@typescript-eslint/eslint-plugin": "^2.34.0",
